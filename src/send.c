@@ -70,7 +70,7 @@ static void wg_packet_send_handshake_initiation(struct wg_peer *peer)
 			buffer = kzalloc(wg->jmax, GFP_KERNEL);
 
 			while (junk_packet_count-- > 0) {
-				junk_packet_size = (u16) get_random_u32_inclusive(wg->jmin, wg->jmax);
+				junk_packet_size = (u16) wg_get_random_u32_inclusive(wg->jmin, wg->jmax);
 
 				get_random_bytes(buffer, junk_packet_size);
 				get_random_bytes(&ds, 1);

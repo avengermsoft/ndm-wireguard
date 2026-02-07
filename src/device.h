@@ -12,6 +12,7 @@
 #include "peerlookup.h"
 #include "cookie.h"
 #include "magic_header.h"
+#include "messages.h"
 
 #include <linux/types.h>
 #include <linux/netdevice.h>
@@ -74,5 +75,14 @@ struct wg_device {
 int wg_device_init(void);
 void wg_device_uninit(void);
 int wg_device_handle_post_config(struct wg_device *wg);
+
+static inline bool client_id_asc_coexist(struct wg_device *wg)
+{
+	return
+		wg->headers[MSGIDX_HANDSHAKE_INIT].start <= 0xFF &&
+		wg->headers[MSGIDX_HANDSHAKE_RESPONSE].start <= 0xFF &&
+		wg->headers[MSGIDX_HANDSHAKE_COOKIE].start <= 0xFF &&
+		wg->headers[MSGIDX_TRANSPORT].start <= 0xFF;
+}
 
 #endif /* _WG_DEVICE_H */

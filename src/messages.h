@@ -6,8 +6,6 @@
 #ifndef _WG_MESSAGES_H
 #define _WG_MESSAGES_H
 
-#include "device.h"
-
 #include <zinc/curve25519.h>
 #include <zinc/chacha20poly1305.h>
 #include <zinc/blake2s.h>
@@ -133,15 +131,6 @@ enum message_size {
 	MESSAGE_TRANSPORT_SIZE = sizeof(struct message_data),
 	MESSAGE_MAX_SIZE = 65535
 };
-
-static inline bool client_id_asc_coexist(struct wg_device *wg)
-{
-	return
-		wg->headers[MSGIDX_HANDSHAKE_INIT].start <= 0xFF &&
-		wg->headers[MSGIDX_HANDSHAKE_RESPONSE].start <= 0xFF &&
-		wg->headers[MSGIDX_HANDSHAKE_COOKIE].start <= 0xFF &&
-		wg->headers[MSGIDX_TRANSPORT].start <= 0xFF;
-}
 
 #define SKB_TYPE_LE32(skb, wg) ((((struct message_header *)(skb)->data)->type) & (!client_id_asc_coexist(wg) ? 0xFFFFFFFF : cpu_to_le32(0xFF)))
 #define SKB_CLEAR_TYPE(skb, wg) ((((struct message_header *)(skb)->data)->type) &= (!client_id_asc_coexist(wg) ? 0xFFFFFFFF : cpu_to_le32(0xFF)))

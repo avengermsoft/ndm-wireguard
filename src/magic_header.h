@@ -13,5 +13,6 @@ int mh_genspec(struct magic_header *mh, char *desc, size_t buflen);
 
 bool mh_validate(__le32 received, struct magic_header* mh);
 u32 mh_genheader(struct magic_header* mh);
+u32 wg_get_random_u32_inclusive(u32 floor, u32 ceil);
 
 #endif
