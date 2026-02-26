@@ -209,7 +209,7 @@ static void wg_receive_handshake_packet(struct wg_device *wg,
 						&peer->endpoint.addr);
 
 		wg_packet_send_handshake_response(peer);
-	}
+	} else
 	if (mh_validate(SKB_TYPE_LE32(skb, wg), &wg->headers[MSGIDX_HANDSHAKE_RESPONSE])) {
 		struct message_handshake_response *message =
 			(struct message_handshake_response *)skb->data;
@@ -320,7 +320,8 @@ static bool decrypt_packet(struct sk_buff *skb, struct noise_keypair *keypair,
 	 * call skb_cow_data, so that there's no chance that data is removed
 	 * from the skb, so that later we can extract the original endpoint.
 	 */
-	offset = skb->data - skb_network_header(skb);
+	// ??? offset = skb->data - skb_network_header(skb);
+	offset = -skb_network_offset(skb);
 	skb_push(skb, offset);
 	num_frags = skb_cow_data(skb, 0, &trailer);
 	offset += sizeof(struct message_data);

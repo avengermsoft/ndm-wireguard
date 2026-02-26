@@ -41,22 +41,22 @@ static void wg_packet_send_handshake_initiation(struct wg_peer *peer)
 			    peer->device->ndm_dev_name, peer->internal_id,
 			    &peer->endpoint.addr);
 
-	atomic_set(&peer->jp_packet_counter, get_random_u32());
-
-	for (i = 0; i < ARRAY_SIZE(wg->ispecs); ++i)
-	{
-		struct jp_spec* spec = &wg->ispecs[i];
-
-		if (spec->pkt_size > 0) {
-			mutex_lock(&spec->lock);
-			jp_spec_applymods(spec, peer);
-			wg_socket_send_buffer_to_peer(peer, spec->pkt, spec->pkt_size, 0, 0);
-			atomic_inc(&peer->jp_packet_counter);
-			mutex_unlock(&spec->lock);
-		}
-	}
-
 	if (wg->advanced_security_config.advanced_security && peer->advanced_security) {
+		atomic_set(&peer->jp_packet_counter, get_random_u32());
+
+		for (i = 0; i < ARRAY_SIZE(wg->ispecs); ++i)
+		{
+			struct jp_spec* spec = &wg->ispecs[i];
+
+			if (spec->pkt_size > 0) {
+				mutex_lock(&spec->lock);
+				jp_spec_applymods(spec, peer);
+				wg_socket_send_buffer_to_peer(peer, spec->pkt, spec->pkt_size, 0, 0);
+				atomic_inc(&peer->jp_packet_counter);
+				mutex_unlock(&spec->lock);
+			}
+		}
+
 		u16 junk_packet_count = wg->advanced_security_config.junk_packet_count;
 		void* buffer = kzalloc(wg->advanced_security_config.junk_packet_max_size, GFP_KERNEL);
 
